@@ -1,0 +1,53 @@
+" ===============================
+" Docker / Remote Vim Fix Config
+" ===============================
+
+" ---- 基础显示 ----
+syntax on                  " 开启语法高亮
+set number                 " 显示行号
+set ruler                  " 显示光标位置
+set showmode               " 显示当前模式
+set showcmd                " 显示命令
+set cursorline             " 高亮当前行
+set term=xterm-256color    " 修复终端类型兼容性
+
+" ---- 缩进与排版 ----
+set tabstop=4              " Tab 显示为 4 个空格
+set shiftwidth=4           " 自动缩进为 4 个空格
+set expandtab              " Tab 转为空格
+set autoindent             " 继承上一行的缩进
+set smartindent            " 根据语法智能缩进
+
+" ---- 搜索 ----
+set ignorecase             " 搜索忽略大小写
+set smartcase              " 如果包含大写，则区分大小写
+set hlsearch               " 高亮搜索结果
+set incsearch              " 输入搜索词时实时匹配
+
+" ---- 文件编码 ----
+set encoding=utf-8
+set fileencodings=utf-8,ucs-bom,gbk,gb18030,big5
+
+" ---- 键位修复 ----
+" 修复 Home / End / Delete / Backspace / 方向键
+map <ESC>OH <Home>
+map <ESC>OF <End>
+imap <ESC>OH <Home>
+imap <ESC>OF <End>
+map <ESC>[3~ <Del>
+imap <ESC>[3~ <Del>
+set backspace=indent,eol,start
+
+" ---- 方向键在插入模式下可用 ----
+set nocompatible
+
+" ---- 状态栏优化 ----
+set laststatus=2
+set statusline=%F%m%r%h%w\ [%{&ff}]\ [%Y]\ [%l,%c]\ [%p%%]
+
+" ---- 其他实用功能 ----
+set clipboard=unnamedplus  " 允许系统剪贴板复制粘贴
+set mouse=a                " 启用鼠标
+filetype plugin indent on  " 启用文件类型检测与插件
+
+set mouse=a
