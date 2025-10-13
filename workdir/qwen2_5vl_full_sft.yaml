@@ -11,11 +11,11 @@ finetuning_type: full
 freeze_vision_tower: true
 freeze_multi_modal_projector: true
 freeze_language_model: false
-deepspeed: /mnt/workspace/LLaMA-Factory/examples/deepspeed/ds_z3_config.json
+deepspeed: ../examples/deepspeed/ds_z3_config.json
 
 ### dataset
 dataset: train # mllm_demo,identity,alpaca_en_demo
-dataset_dir: /mnt/workspace/LLaMA-Factory/data
+dataset_dir: ../data
 template: qwen2_vl
 cutoff_len: 2048
 max_samples: 10000

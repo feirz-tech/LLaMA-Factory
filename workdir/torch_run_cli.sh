@@ -1,7 +1,12 @@
-ROOT=/mnt/workspace/LLaMA-Factory
+#!/bin/bash
+
+# 获取脚本所在目录
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# LLaMA-Factory 根目录是脚本目录的上一级
+ROOT="$(dirname "$SCRIPT_DIR")"
 
 export PYTHONPATH=$ROOT/src:$ROOT:$PYTHONPYTH
-MODEL=/dev/shm/Qwen2.5-VL-72B-Instruct/Qwen/Qwen2.5-VL-72B-Instruct
 
 FORCE_TORCHRUN=1
 CONFIG=$1
