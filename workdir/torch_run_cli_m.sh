@@ -1,8 +1,8 @@
 #!/bin/bash
 
-NNODES=$2
-NODE_RANK=$RANK
-NPROC_PER_NODE=8
+export NNODES=$2
+export NODE_RANK=$RANK
+export NPROC_PER_NODE=8
 
 # 获取脚本所在目录
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
