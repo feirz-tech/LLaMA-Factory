@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from dataclasses import asdict, dataclass, field
-from typing import Any, Literal, Optional
+from typing import Any, Literal, Optional, List, Tuple
 
 
 @dataclass
@@ -512,6 +512,10 @@ class FinetuningArguments(
     include_effective_tokens_per_second: bool = field(
         default=False,
         metadata={"help": "Whether or not to compute effective tokens per second."},
+    )
+    lr_specific: Optional[List[Tuple[float, float, str]]] = field(
+        default=None,
+        metadata={"help": "List of learning rates for specific layers or modules. [[lr, decay, module key name], ...] eg: [[0.01, 0.0, 'vision'], ...]"}
     )
 
     def __post_init__(self):

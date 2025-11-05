@@ -3,6 +3,8 @@
 export NNODES=$2
 export NODE_RANK=$RANK
 export NPROC_PER_NODE=8
+# export NCCL_DEBUG=WARN
+
 
 # 获取脚本所在目录
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -12,7 +14,7 @@ ROOT="$(dirname "$SCRIPT_DIR")"
 
 export PYTHONPATH=$ROOT/src:$ROOT:$PYTHONPYTH
 
-FORCE_TORCHRUN=1
+export FORCE_TORCHRUN=1
 CONFIG=$1
 TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
 CONFIG_NAME=$(basename "$CONFIG" "${CONFIG##*.}")

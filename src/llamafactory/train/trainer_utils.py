@@ -22,6 +22,7 @@ import os
 from collections.abc import Mapping
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Optional, Union
+from collections import defaultdict
 
 import torch
 from transformers import Trainer
@@ -774,3 +775,63 @@ def get_ray_trainer(
         ),
     )
     return trainer
+
+
+def update_optim_param_groups(
+    model,
+    optimizer,
+    training_agrs,
+    update_args,
+    no_decay_keys=["bias"]
+):
+
+    defaults = optimizer.defaults
+    default_lr = training_agrs.learning_rate
+    default_decay = training_agrs.weight_decay
+
+    grouped_params = defaultdict(list)
+
+    for name, param in model.named_parameters():
+        use_decay = False if any(nd in name for nd in no_decay_keys) else True
+
+        group_name = "default"
+        lr = default_lr
+        decay = default_decay if use_decay else 0.0
+
+        for spec_lr, spec_decay, spec_name in update_args:
+            if spec_name in name:
+                group_name = spec_name
+                lr = spec_lr
+                decay = spec_decay if use_decay else 0.0
+                break
+
+        key = f"{group_name}_decay_{decay}"
+        grouped_params[key].append((param, lr, decay, key))
+
+    new_param_groups = []
+    for key, params in grouped_params.items():
+        group_params = [p[0] for p in params]
+        lr = params[0][1]
+        decay = params[0][2]
+        name = params[0][3]
+        new_group = {
+            "params": group_params,
+            "lr": lr,
+            "weight_decay": decay,
+            "name": name,
+        }
+        for key, value in defaults.items():
+            if key not in new_group:
+                new_group[key] = value
+
+        new_param_groups.append(new_group)
+
+    optimizer.param_groups = new_param_groups
+
+    logger.info_rank0("=== Update Optimizer Parameter Groups ===")
+    for i, group in enumerate(optimizer.param_groups):
+        if "params" in group:
+            logger.info_rank0(f"[{i}] name: {group['name']}, lr: {group['lr']}, weight_decay: {group['weight_decay']}")
+    logger.info_rank0("=================================")
+    return optimizer
+

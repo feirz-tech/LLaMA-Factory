@@ -4,7 +4,6 @@
 
 " ---- 基础显示 ----
 syntax on                  " 开启语法高亮
-set number                 " 显示行号
 set ruler                  " 显示光标位置
 set showmode               " 显示当前模式
 set showcmd                " 显示命令
@@ -47,7 +46,5 @@ set statusline=%F%m%r%h%w\ [%{&ff}]\ [%Y]\ [%l,%c]\ [%p%%]
 
 " ---- 其他实用功能 ----
 set clipboard=unnamedplus  " 允许系统剪贴板复制粘贴
-set mouse=a                " 启用鼠标
+set mouse=                " 启用鼠标
 filetype plugin indent on  " 启用文件类型检测与插件
-
-set mouse=a

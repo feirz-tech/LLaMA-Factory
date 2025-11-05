@@ -47,9 +47,9 @@ if is_librosa_available():
 
 
 if is_pillow_available():
-    from PIL import Image
+    from PIL import Image, ImageFile
     from PIL.Image import Image as ImageObject
-
+    ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 if is_pyav_available():
     import av
@@ -249,7 +249,32 @@ class MMPluginMixin:
         results = []
         for image in images:
             if isinstance(image, (str, BinaryIO)):
+                if isinstance(image, str) and "s3://" in image:
+                    from urllib.parse import urlparse
+                    import boto3
+                    s3 = boto3.client("s3")
+                    parsed = urlparse(image)
+                    bucket_name = parsed.netloc
+                    key = parsed.path.lstrip('/')
+                    try_time = 5
+                    while try_time:
+                        try:
+                            response = s3.get_object(Bucket=bucket_name, Key=key)
+                            image_data = response['Body'].read()
+                            s3_object = s3.head_object(Bucket=bucket_name, Key=key)
+                            if len(image_data) < s3_object['ContentLength']:
+                                try_time -= 1
+                                print(f"Image file is truncated, try to read {5-try_time} time!")
+                                continue
+                            image = BytesIO(image_data)
+                            break
+                        except Exception as e:
+                            print(e)
+                            try_time -= 1
+                            print(f"Failed to read s3 image and try it {5-try_time} time!")
                 image = Image.open(image)
+                if image.mode != "RGBA":
+                    image = image.convert("RGBA")
             elif isinstance(image, bytes):
                 image = Image.open(BytesIO(image))
             elif isinstance(image, dict):

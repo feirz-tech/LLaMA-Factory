@@ -30,7 +30,7 @@ from ...extras.constants import IGNORE_INDEX
 from ...extras.packages import is_transformers_version_greater_than
 from ..callbacks import SaveProcessorCallback
 from ..fp8_utils import configure_fp8_environment, verify_fp8_status
-from ..trainer_utils import create_custom_optimizer, create_custom_scheduler
+from ..trainer_utils import create_custom_optimizer, create_custom_scheduler, update_optim_param_groups
 
 
 if TYPE_CHECKING:
@@ -96,7 +96,12 @@ class CustomSeq2SeqTrainer(Seq2SeqTrainer):
     def create_optimizer(self) -> "torch.optim.Optimizer":
         if self.optimizer is None:
             self.optimizer = create_custom_optimizer(self.model, self.args, self.finetuning_args)
-        return super().create_optimizer()
+
+        self.optimizer = super().create_optimizer()
+
+        if self.finetuning_args.lr_specific is not None and len(self.finetuning_args.lr_specific) != 0:
+            self.optimizer = update_optim_param_groups(self.model, self.optimizer, self.args, self.finetuning_args.lr_specific)
+        return self.optimizer
 
     @override
     def create_scheduler(
